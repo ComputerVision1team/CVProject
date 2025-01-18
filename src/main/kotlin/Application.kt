@@ -13,6 +13,6 @@ fun Application.module() {
     configureSockets()
     configureSerialization()
     configureDatabases()
-    configureHTTP()
+    //configureHTTP()
     configureRouting()
 }

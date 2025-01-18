@@ -30,7 +30,11 @@ class UserService(private val database: MongoDatabase) {
     var collection: MongoCollection<Document>
 
     init {
-        database.createCollection("users")
+        // Check if the collection exists before creating it
+        val collectionNames = database.listCollectionNames().into(mutableListOf())
+        if ("users" !in collectionNames) {
+            database.createCollection("users")
+        }
         collection = database.getCollection("users")
     }
 
