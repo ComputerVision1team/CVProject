@@ -17,8 +17,8 @@
       <span class="text-wrapper-2">감독관은 시간에 맞춰 START<br />의심 학생은 알림이 올 예정<br />START시 END까지 종료 불가<br /></span>
     </p>
     <div class="group">
-      <button class="start-btn">
-        <div class="overlap-group"><img class="image" src="/images/START.png" /></div>
+      <button class="start-btn" onclick="redirectToProfLogin2()">
+        <div class="overlap-group"><img class="image" src="/images/start.png" /></div>
       </button>
       <div class="text-wrapper-3">인텔대학교</div>
       <div class="element">과목: 객체지향 이해</div>
@@ -26,6 +26,11 @@
   </div>
 </div>
 
+<script>
+  function redirectToProfLogin2() {
+    window.location.href = 'proflogin2.html';
+  }
+</script>
 </body>
 
 </html>

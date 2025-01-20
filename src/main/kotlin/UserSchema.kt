@@ -15,7 +15,8 @@ import org.bson.types.ObjectId
 data class User(
     val user_id: String,
     val username: String,
-    val password: String
+    val password: String,
+    val role: String
 ) {
     fun toDocument(): Document = Document.parse(Json.encodeToString(this))
 

@@ -282,3 +282,334 @@
 }
 
 
+.professor {
+  padding: 20px; /* Adjust padding as needed */
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+.professor .professor-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.professor .overlap-group {
+  width: 1080px;
+  height: 861px;
+  top: 133px;
+  left: 329px;
+  background-color: #ffffff;
+  box-shadow: 0px 15px 40px 5px #ececec;
+  position: absolute;
+  border-radius: 30px;
+}
+
+.professor .image {
+  position: absolute;
+  width: 213px;
+  height: 200px;
+  top: 534px;
+  left: 585px;
+  object-fit: cover;
+}
+
+.professor .img {
+  top: 209px;
+  left: 63px;
+  position: absolute;
+  width: 213px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.professor .image-2 {
+  top: 209px;
+  left: 580px;
+  position: absolute;
+  width: 213px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.professor .image-3 {
+  top: 534px;
+  left: 63px;
+  position: absolute;
+  width: 213px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.professor .text-wrapper {
+  height: 24px;
+  top: 180px;
+  left: 57px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 20px;
+  text-align: center;
+  white-space: nowrap;
+  position: absolute;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .div {
+  height: 24px;
+  top: 180px;
+  left: 585px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 20px;
+  text-align: center;
+  white-space: nowrap;
+  position: absolute;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .text-wrapper-2 {
+  height: 24px;
+  top: 504px;
+  left: 585px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 20px;
+  text-align: center;
+  white-space: nowrap;
+  position: absolute;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .text-wrapper-3 {
+  height: 24px;
+  top: 504px;
+  left: 63px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 20px;
+  text-align: center;
+  white-space: nowrap;
+  position: absolute;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .text-wrapper-4 {
+  height: 50px;
+  top: 58px;
+  left: 881px;
+  font-family: "Poppins-Bold", Helvetica;
+  font-weight: 700;
+  color: #696f79;
+  font-size: 33px;
+  position: absolute;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .AI-exam-PM {
+  position: absolute;
+  height: 105px;
+  top: 31px;
+  left: 266px;
+  font-family: "Poppins-Bold", Helvetica;
+  font-weight: 700;
+  color: #696f79;
+  font-size: 70px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .element {
+  position: absolute;
+  width: 213px;
+  height: 200px;
+  top: 209px;
+  left: 793px;
+  object-fit: cover;
+}
+
+.professor .element-2 {
+  position: absolute;
+  width: 213px;
+  height: 200px;
+  top: 534px;
+  left: 798px;
+  object-fit: cover;
+}
+
+.professor .element-3 {
+  position: absolute;
+  width: 213px;
+  height: 200px;
+  top: 209px;
+  left: 276px;
+  object-fit: cover;
+}
+
+.professor .element-4 {
+  position: absolute;
+  width: 213px;
+  height: 200px;
+  top: 534px;
+  left: 276px;
+  object-fit: cover;
+}
+
+.professor .overlap {
+  width: 356px;
+  height: 64px;
+  top: 32px;
+  left: 1053px;
+  background-color: #ffffff;
+  box-shadow: 0px 15px 40px 5px #ececec;
+  position: absolute;
+  border-radius: 30px;
+}
+
+.professor .search-icon {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 20px;
+  left: 24px;
+}
+
+.professor .text-wrapper-5 {
+  position: absolute;
+  height: 29px;
+  top: 13px;
+  left: 61px;
+  font-family: "Poppins-Regular", Helvetica;
+  font-weight: 400;
+  color: #696f79;
+  font-size: 19px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .text-wrapper-6 {
+  position: absolute;
+  height: 45px;
+  top: 42px;
+  left: 61px;
+  font-family: "Poppins-ExtraBold", Helvetica;
+  font-weight: 800;
+  color: #696f79;
+  font-size: 30px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .text-wrapper-7 {
+  position: absolute;
+  height: 30px;
+  top: 226px;
+  left: 127px;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #696f79;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .text-wrapper-8 {
+  position: absolute;
+  height: 30px;
+  top: 303px;
+  left: 127px;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #696f79;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .overlap-2 {
+  width: 271px;
+  height: 64px;
+  top: 133px;
+  left: 31px;
+  background-color: #8591a5;
+  position: absolute;
+  border-radius: 30px;
+}
+
+.professor .text-wrapper-9 {
+  position: absolute;
+  height: 30px;
+  top: 16px;
+  left: 95px;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #ffffff;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .dashboard-icon {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 20px;
+  left: 40px;
+}
+
+.professor .support-icon {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 231px;
+  left: 74px;
+}
+
+.professor .notification-icon {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 308px;
+  left: 73px;
+}
+
+.professor .log-out-group {
+  position: absolute;
+  width: 133px;
+  height: 30px;
+  top: 941px;
+  left: 75px;
+}
+
+.professor .text-wrapper-10 {
+  position: absolute;
+  height: 30px;
+  top: 0;
+  left: 54px;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-weight: 600;
+  color: #696f79;
+  font-size: 20px;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.professor .icon-of-log-out {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  top: 3px;
+  left: 0;
+}
+
+
