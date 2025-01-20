@@ -5,6 +5,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.config.*
+import io.ktor.server.http.content.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.swagger.*
 import io.ktor.server.request.*
@@ -50,14 +51,7 @@ fun Application.configureRouting() {
             if (username != null && password != null) {
                 val user = validateUser(username, password)
                 if (user != null) {
-                    // Check the role of the user (student or professor)
-                    if (user.role == "student") {
-                        call.respondRedirect("/HTML/studentlogin1.html")  // Redirect to student page
-                    } else if (user.role == "professor") {
-                        call.respondRedirect("/HTML/proflogin1.html")  // Redirect to professor page
-                    } else {
-                        call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
-                    }
+                    call.respond(HttpStatusCode.OK)
                 } else {
                     call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
                 }
@@ -65,8 +59,6 @@ fun Application.configureRouting() {
                 call.respond(HttpStatusCode.BadRequest, "Missing username or password")
             }
         }
-
-
     }
 
 

@@ -316,21 +316,21 @@
   object-fit: cover;
 }
 
-.professor .img {
+.professor .screen1 {
   top: 209px;
   left: 63px;
   position: absolute;
-  width: 213px;
-  height: 200px;
+  width: 400px;
+  height: 400px;
   object-fit: cover;
 }
 
-.professor .image-2 {
+.professor .screen2 {
   top: 209px;
   left: 580px;
   position: absolute;
-  width: 213px;
-  height: 200px;
+  width: 400px;
+  height: 400px;
   object-fit: cover;
 }
 
@@ -613,3 +613,28 @@
 }
 
 
+
+.testscreen {
+  position: relative;
+  display: inline-block;
+  margin: 20px;
+}
+.video1{
+  position: absolute;
+  top: 200px;
+  left: 100px;
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border: 2px solid #000;
+}
+
+.video2{
+  position: absolute;
+  top: 200px;
+  left: 600px;
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  border: 2px solid #000;
+}
