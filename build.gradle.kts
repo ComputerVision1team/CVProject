@@ -3,6 +3,12 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlin.plugin.serialization)
+    java
+}
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 group = "com"
@@ -20,6 +26,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.litote.kmongo:kmongo:5.2.0")
+    implementation("org.litote.kmongo:kmongo-async:5.2.0")
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.websockets)
     implementation(libs.ktor.serialization.kotlinx.json)
