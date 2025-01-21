@@ -13,7 +13,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-
+import kotlinx.serialization.Serializable
 import org.litote.kmongo.KMongo
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -22,6 +22,12 @@ import org.slf4j.LoggerFactory
 import java.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
+@Serializable
+data class Admin(
+    val admin_id: String,
+    val adminname: String,
+    val adminpassword: String
+)
 
 fun validateUser(username: String, password: String): User? {
     val logger = LoggerFactory.getLogger("validateUser")
@@ -41,6 +47,24 @@ fun validateUser(username: String, password: String): User? {
     }
 }
 
+fun validateAdmin(username: String, password: String): Admin? {
+    val logger = LoggerFactory.getLogger("validateAdmin")
+    val client = KMongo.createClient("mongodb://192.168.45.5:27017")
+    val database = client.getDatabase("Admins")
+    val collection = database.getCollection<Admin>("admins")
+
+    return try {
+        val admin = collection.findOne(Admin::adminname eq username, Admin::adminpassword eq password)
+        if (admin == null) {
+            logger.info("No matching admin found for username: $username")
+        }
+        admin
+    } catch (e: Exception) {
+        logger.error("Error validating admin", e)
+        null
+    }
+}
+
 fun Application.configureRouting() {
     routing {
         get("/") {
@@ -55,6 +79,23 @@ fun Application.configureRouting() {
             if (username != null && password != null) {
                 val user = validateUser(username, password)
                 if (user != null) {
+                    call.respond(HttpStatusCode.OK)
+                } else {
+                    call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")
+                }
+            } else {
+                call.respond(HttpStatusCode.BadRequest, "Missing username or password")
+            }
+        }
+
+        post("/admin/login") {
+            val parameters = call.receiveParameters()
+            val username = parameters["username"]
+            val password = parameters["password"]
+
+            if (username != null && password != null) {
+                val admin = validateAdmin(username, password)
+                if (admin != null) {
                     call.respond(HttpStatusCode.OK)
                 } else {
                     call.respond(HttpStatusCode.Unauthorized, "Invalid credentials")

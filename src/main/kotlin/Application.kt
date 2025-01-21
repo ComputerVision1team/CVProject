@@ -7,8 +7,8 @@ import io.ktor.server.jetty.jakarta.*
 import io.ktor.server.routing.*
 
 fun main() {
-    embeddedServer(Jetty, port = 8080, host = "127.0.0.1", module = Application::module)
-    //embeddedServer(Jetty, port = 8080, host = "0.0.0.0", module = Application::module)
+//    embeddedServer(Jetty, port = 8080, host = "127.0.0.1", module = Application::module)
+    embeddedServer(Jetty, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 

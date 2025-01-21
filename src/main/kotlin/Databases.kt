@@ -18,8 +18,12 @@ import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.setValue
+import java.io.File
+import java.util.*
+
 @Serializable
 data class GazeData(val userId: String, val screenshot: String, val timestamp: String, val count: Int)
+
 
 fun Application.configureDatabases() {
     install(ContentNegotiation) {
@@ -59,13 +63,21 @@ fun Application.configureDatabases() {
         // Save gaze data
         post("/gaze-data") {
             val gazeData = call.receive<GazeData>()
-            saveGazeData(warningsDatabase, gazeData)
+            val filePath = saveScreenshot(gazeData.screenshot)
+            val updatedGazeData = gazeData.copy(screenshot = filePath)
+            saveGazeData(warningsDatabase, updatedGazeData)
             call.respond(HttpStatusCode.OK)
         }
     }
 }
 
-
+fun saveScreenshot(dataUrl: String): String {
+    val base64Image = dataUrl.split(",")[1]
+    val imageBytes = Base64.getDecoder().decode(base64Image)
+    val filePath = "screenshots/${UUID.randomUUID()}.png"
+    File(filePath).writeBytes(imageBytes)
+    return filePath
+}
 fun saveGazeData(database: MongoDatabase, gazeData: GazeData) {
     val warningsCollection = database.getCollection<GazeData>("warnings")
     warningsCollection.insertOne(gazeData)
@@ -75,10 +87,6 @@ fun saveGazeData(database: MongoDatabase, gazeData: GazeData) {
     if (user != null) {
         val newWarningCount = user.warning_count + 1
         usersCollection.updateOne(User::user_id eq gazeData.userId, setValue(User::warning_count, newWarningCount))
-        if (newWarningCount >= 3) {
-            // Logic to deactivate the screen
-            // This can be implemented by setting a flag in the user document or any other method
-        }
     }
 }
 
