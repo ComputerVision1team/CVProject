@@ -25,19 +25,23 @@ import kotlin.time.Duration.Companion.seconds
 
 fun validateUser(username: String, password: String): User? {
     val logger = LoggerFactory.getLogger("validateUser")
-    val client = KMongo.createClient("mongodb://localhost:27017")
+    val client = KMongo.createClient("mongodb://192.168.45.5:27017")
     val database = client.getDatabase("Users")
     val collection = database.getCollection<User>("users")
 
-    val user = collection.findOne(User::username eq username, User::password eq password)
-    if (user == null) {
-        logger.info("No matching user found for username: $username")
+    return try {
+        val user = collection.findOne(User::username eq username, User::password eq password)
+        if (user == null) {
+            logger.info("No matching user found for username: $username")
+        }
+        user
+    } catch (e: Exception) {
+        logger.error("Error validating user", e)
+        null
     }
-    return user
 }
 
 fun Application.configureRouting() {
-
     routing {
         get("/") {
             call.respondRedirect("/HTML/mainscreen.html")
@@ -60,6 +64,4 @@ fun Application.configureRouting() {
             }
         }
     }
-
-
 }

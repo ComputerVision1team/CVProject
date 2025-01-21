@@ -17,7 +17,6 @@ fun Application.module() {
     configureSockets()
     configureSerialization()
     configureDatabases()
-    //configureHTTP()
     configureRouting()
     configureStatic()
 }

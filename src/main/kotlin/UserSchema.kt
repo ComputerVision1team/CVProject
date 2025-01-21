@@ -16,7 +16,8 @@ data class User(
     val user_id: String,
     val username: String,
     val password: String,
-    val role: String
+    val warning_count: Int = 0
+//    val role: String
 ) {
     fun toDocument(): Document = Document.parse(Json.encodeToString(this))
 
