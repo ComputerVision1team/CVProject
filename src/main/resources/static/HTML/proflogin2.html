@@ -45,6 +45,14 @@
             border: none;
             border-top: 1px solid #ccc;
         }
+        canvas {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 640px;
+            height: 480px;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -54,6 +62,7 @@
             <!-- Video 1 -->
             <div class="testscreen">
                 <video id="webcam" class="video1" autoplay playsinline></video>
+                <canvas id="overlay"></canvas>
             </div>
 
             <div class="text-wrapper">18010871 김일번</div>
@@ -92,145 +101,10 @@
     <input type="text" class="chat-input" id="chat-input" placeholder="메시지를 입력하세요..."/>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
 <script src="../JS/screen.js"></script>
-<script>
-    let warningCount = 0;
-    let socket;
-
-    document.getElementById('increase-warning').addEventListener('click', () => {
-        warningCount++;
-        handleWarning(warningCount);
-    });
-
-    document.getElementById('gesture-1').addEventListener('click', () => {
-        showAlert('응시자 장비 이슈');
-        openChat();
-    });
-
-    document.getElementById('gesture-2').addEventListener('click', () => {
-        showAlert('인터넷 연결 이슈');
-        openChat();
-    });
-
-    document.getElementById('gesture-3').addEventListener('click', () => {
-        showAlert('기타 이슈');
-        openChat();
-    });
-
-    function showAlert(message) {
-        const warningMessage = document.getElementById('warning-message');
-        warningMessage.textContent = message;
-        warningMessage.style.display = 'block';
-        setTimeout(() => {
-            warningMessage.style.display = 'none';
-        }, 3000);
-    }
-
-    function openChat() {
-        const chatBox = document.getElementById('chat-box');
-        chatBox.style.display = 'block';
-        if (!socket) {
-            setupWebSocket();
-        }
-    }
-
-    function setupWebSocket() {
-        socket = new WebSocket('ws://localhost:8080/ws');
-        socket.onmessage = (event) => {
-            const chatMessages = document.getElementById('chat-messages');
-            const message = document.createElement('div');
-            message.textContent = event.data;
-            chatMessages.appendChild(message);
-        };
-
-        const chatInput = document.getElementById('chat-input');
-        chatInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                const message = chatInput.value;
-                socket.send(message);
-                chatInput.value = '';
-            }
-        });
-    }
-
-    async function setupWebcam() {
-        const video = document.getElementById('webcam');
-        return new Promise((resolve, reject) => {
-            const navigatorAny = navigator;
-            navigator.getUserMedia = navigator.getUserMedia ||
-                navigatorAny.webkitGetUserMedia || navigatorAny.mozGetUserMedia ||
-                navigatorAny.msGetUserMedia;
-            if (navigator.getUserMedia) {
-                navigator.getUserMedia(
-                    { video: true },
-                    stream => {
-                        video.srcObject = stream;
-                        video.addEventListener('loadeddata', () => resolve(), false);
-                    },
-                    error => reject(error)
-                );
-            } else {
-                reject();
-            }
-        });
-    }
-
-    async function main() {
-        try {
-            await setupWebcam();
-        } catch (error) {
-            console.error('Error setting up webcam:', error);
-        }
-    }
-
-    function handleWarning(count) {
-        const warningMessage = document.getElementById('warning-message');
-        const webcam = document.getElementById('webcam');
-
-        warningMessage.textContent = `경고 ${count}회`;
-        warningMessage.style.display = 'block';
-        setTimeout(() => {
-            warningMessage.style.display = 'none';
-        }, 3000);
-
-        captureWebcam();
-
-        if (count === 2) {
-            webcam.classList.add('warning-border-2');
-        } else if (count >= 3) {
-            webcam.classList.remove('warning-border-2');
-            webcam.classList.add('warning-border-3');
-            document.body.classList.add('disabled');
-        }
-    }
-
-    function captureWebcam() {
-        const canvas = document.createElement('canvas');
-        const video = document.getElementById('webcam');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const screenshot = canvas.toDataURL('image/png');
-        const timestamp = new Date().toISOString();
-        const userId = 'user1'; // 실제 사용자 ID로 대체
-
-        const data = { userId, screenshot, timestamp, count: warningCount };
-        sendGazeData(data);
-    }
-
-    async function sendGazeData(data) {
-        const response = await fetch('/gaze-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        return response.json();
-    }
-
-    main();
-</script>
 </body>
 </html>
