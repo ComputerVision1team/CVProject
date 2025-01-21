@@ -31,7 +31,8 @@ data class Admin(
 
 fun validateUser(username: String, password: String): User? {
     val logger = LoggerFactory.getLogger("validateUser")
-    val client = KMongo.createClient("mongodb://192.168.45.5:27017")
+//    val client = KMongo.createClient("mongodb://192.168.45.5:27017")
+    val client = KMongo.createClient("mongodb://localhost:27017")
     val database = client.getDatabase("Users")
     val collection = database.getCollection<User>("users")
 
@@ -49,7 +50,7 @@ fun validateUser(username: String, password: String): User? {
 
 fun validateAdmin(username: String, password: String): Admin? {
     val logger = LoggerFactory.getLogger("validateAdmin")
-    val client = KMongo.createClient("mongodb://192.168.45.5:27017")
+    val client = KMongo.createClient("mongodb://localhost:27017")
     val database = client.getDatabase("Admins")
     val collection = database.getCollection<Admin>("admins")
 
@@ -70,6 +71,7 @@ fun Application.configureRouting() {
         get("/") {
             call.respondRedirect("/HTML/mainscreen.html")
         }
+
 
         post("/login") {
             val parameters = call.receiveParameters()

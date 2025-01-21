@@ -65,7 +65,7 @@ fun Application.configureDatabases() {
             val gazeData = call.receive<GazeData>()
             val filePath = saveScreenshot(gazeData.screenshot)
             val updatedGazeData = gazeData.copy(screenshot = filePath)
-            saveGazeData(warningsDatabase, updatedGazeData)
+            saveGazeData(warningsDatabase, updatedGazeData, userService)
             call.respond(HttpStatusCode.OK)
         }
     }
@@ -78,7 +78,7 @@ fun saveScreenshot(dataUrl: String): String {
     File(filePath).writeBytes(imageBytes)
     return filePath
 }
-fun saveGazeData(database: MongoDatabase, gazeData: GazeData) {
+suspend fun saveGazeData(database: MongoDatabase, gazeData: GazeData, userService: UserService) {
     val warningsCollection = database.getCollection<GazeData>("warnings")
     warningsCollection.insertOne(gazeData)
 
@@ -86,14 +86,15 @@ fun saveGazeData(database: MongoDatabase, gazeData: GazeData) {
     val user = usersCollection.findOne(User::user_id eq gazeData.userId)
     if (user != null) {
         val newWarningCount = user.warning_count + 1
-        usersCollection.updateOne(User::user_id eq gazeData.userId, setValue(User::warning_count, newWarningCount))
+        userService.updateWarningCount(user.user_id, newWarningCount)
     }
 }
 
 fun Application.connectToMongoDB(): Pair<MongoDatabase, MongoDatabase> {
     val user = environment.config.tryGetString("db.mongo.user")
     val password = environment.config.tryGetString("db.mongo.password")
-    val host = environment.config.tryGetString("db.mongo.host") ?: "192.168.45.5"
+//    val host = environment.config.tryGetString("db.mongo.host") ?: "192.168.45.5"
+    val host = environment.config.tryGetString("db.mongo.host") ?: "localhost"
     val port = environment.config.tryGetString("db.mongo.port") ?: "27017"
     val maxPoolSize = environment.config.tryGetString("db.mongo.maxPoolSize")?.toInt() ?: 20
     val userDatabaseName = environment.config.tryGetString("db.mongo.database.name") ?: "Users"

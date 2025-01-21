@@ -45,20 +45,27 @@
             border: none;
             border-top: 1px solid #ccc;
         }
+        .video-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px;
+        }
+        .video1 {
+            width: 400px;
+            height: 300px;
+            object-fit: cover;
+            border: 2px solid #000;
+        }
     </style>
 </head>
 <body>
 <div class="admin">
     <div class="admin-screen">
         <div class="overlap-group">
-            <!-- Video -->
-            <div class="testscreen">
-                <video id="webcam" class="video1" autoplay playsinline></video>
-            </div>
-            <div class="text-wrapper">User ID: 18010871</div>
-            <div class="text-wrapper-4">Admin</div>
-            <div class="AI-exam-PM">AI Exam&nbsp;&nbsp;PM 2시</div>
+            <!-- 웹캠 화면이 여기에 동적으로 추가됩니다 -->
         </div>
+        <div class="text-wrapper-4">Admin</div>
+        <div class="AI-exam-PM">AI Exam&nbsp;&nbsp;PM 2시</div>
         <div class="overlap">
             <img class="search-icon" src="img/search-icon.svg"/>
             <div class="text-wrapper-5">Search..</div>
@@ -78,12 +85,10 @@
         </div>
     </div>
 </div>
-<div id="warning-message" style="display: none; position: fixed; bottom: 10px; right: 10px; background-color: red; color: white; padding: 10px;">경고 1회</div>
-<button id="increase-warning" style="position: fixed; bottom: 50px; right: 10px;">경고 증가</button>
 <div id="chat-box" class="chat-box">
     <div class="chat-header">관리자와 채팅</div>
     <div class="chat-messages" id="chat-messages"></div>
-    <input type="text" class="chat-input" id="chat-input" placeholder="메시지를 입력하세요..."/>
+    <input type="text" class="chat-input" id="chat-input" placeholder="메시지를 입력하세요..." data-user-id="Admin"/>
 </div>
 <script src="../JS/admin.js"></script>
 </body>
