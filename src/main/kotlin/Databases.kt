@@ -19,6 +19,7 @@ import org.litote.kmongo.findOne
 import org.litote.kmongo.getCollection
 import org.litote.kmongo.setValue
 import java.io.File
+import java.nio.file.Paths
 import java.util.*
 
 @Serializable
@@ -68,7 +69,33 @@ fun Application.configureDatabases() {
             saveGazeData(warningsDatabase, updatedGazeData, userService)
             call.respond(HttpStatusCode.OK)
         }
+        post("/capture-data") {
+            val data = call.receive<GazeData>()
+            val screenshotData = data.screenshot.split(",")[1]
+            val decodedBytes = Base64.getDecoder().decode(screenshotData)
+            val fileName = "${data.userId}_${data.timestamp}.png"
+            val filePath = Paths.get("screenshots", fileName).toString()
+            File(filePath).writeBytes(decodedBytes)
+            call.respond(HttpStatusCode.OK, "Screenshot saved")
+        }
+        get("/warning-images") {
+            val warningImages = getRecentWarningImages()
+            call.respond(warningImages)
+        }
     }
+}
+
+fun getRecentWarningImages(): List<String> {
+    val screenshotsDir = File("screenshots")
+    if (!screenshotsDir.exists() || !screenshotsDir.isDirectory) {
+        return emptyList()
+    }
+
+    return screenshotsDir.listFiles { file -> file.extension == "png" }
+        ?.sortedByDescending { it.lastModified() }
+        ?.take(3)
+        ?.map { it.toURI().toString() }
+        ?: emptyList()
 }
 
 fun saveScreenshot(dataUrl: String): String {
@@ -78,6 +105,7 @@ fun saveScreenshot(dataUrl: String): String {
     File(filePath).writeBytes(imageBytes)
     return filePath
 }
+
 suspend fun saveGazeData(database: MongoDatabase, gazeData: GazeData, userService: UserService) {
     val warningsCollection = database.getCollection<GazeData>("warnings")
     warningsCollection.insertOne(gazeData)

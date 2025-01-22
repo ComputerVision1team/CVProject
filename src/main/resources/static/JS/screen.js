@@ -246,7 +246,7 @@ function captureScreen() {
     const screenshot = canvas.toDataURL('image/png');
     const timestamp = new Date().toISOString();
 
-    // 서버로 캡처 데이터 전송
+    // Send capture data to the server
     sendCaptureData({ screenshot, timestamp, warningCount });
 }
 
@@ -275,15 +275,29 @@ function captureWarningImage() {
     warningImages.push(image);
 }
 
-function viewWarningImages() {
-    const warningImages = getWarningImages(); // 경고 이미지 가져오기
-    if (warningImages.length > 0) {
-        const imageWindow = window.open('', '_blank');
-        warningImages.slice(-3).forEach((image, index) => {
-            imageWindow.document.write(`<img src="${image}" alt="Warning ${index + 1}"><br>`);
+async function viewWarningImages() {
+    try {
+        const response = await fetch('/warning-images', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
-    } else {
-        alert('No warning images available.');
+        if (response.ok) {
+            const warningImages = await response.json();
+            if (warningImages.length > 0) {
+                const imageWindow = window.open('', '_blank');
+                warningImages.slice(-3).forEach((image, index) => {
+                    imageWindow.document.write(`<img src="${image}" alt="Warning ${index + 1}"><br>`);
+                });
+            } else {
+                alert('No warning images available.');
+            }
+        } else {
+            console.error('Failed to fetch warning images:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error fetching warning images:', error);
     }
 }
 
