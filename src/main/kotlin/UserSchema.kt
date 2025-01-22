@@ -13,10 +13,11 @@ import org.bson.types.ObjectId
 
 @Serializable
 data class User(
-    val user_id: String,
+    val userId: String,
     val username: String,
     val password: String,
-    val warning_count: Int = 0
+    val warning_count: Int = 0,
+    val screenshots: List<String> = emptyList()
 //    val role: String
 ) {
     fun toDocument(): Document = Document.parse(Json.encodeToString(this))

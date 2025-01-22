@@ -250,7 +250,8 @@ function captureScreen() {
     sendCaptureData({ screenshot, timestamp, warningCount });
 }
 
-async function sendCaptureData(data) {
+async function sendCaptureData(data, userId) {
+    data.userId = userId; // 사용자 ID 설정
     try {
         const response = await fetch('/capture-data', {
             method: 'POST',
@@ -275,8 +276,8 @@ function captureWarningImage() {
     warningImages.push(image);
 }
 
-function viewWarningImages() {
-    const warningImages = getWarningImages(); // 경고 이미지 가져오기
+async function viewWarningImages() {
+    const warningImages = await getWarningImages(); // 경고 이미지 가져오기
     if (warningImages.length > 0) {
         const imageWindow = window.open('', '_blank');
         warningImages.slice(-3).forEach((image, index) => {
@@ -311,6 +312,20 @@ async function getWarningImages() {
 function increaseWarning() {
     warningCount++;
     handleWarning(warningCount);
+    captureScreenAndSend(); // 화면 캡처 및 전송 함수 호출
+}
+
+function captureScreenAndSend() {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const context = canvas.getContext('2d');
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const screenshot = canvas.toDataURL('image/png');
+    const timestamp = new Date().toISOString();
+
+    // 서버로 캡처 데이터 전송
+    sendCaptureData({ screenshot, timestamp, warningCount }, '2'); // 실제 사용자 ID로 변경
 }
 
 async function main() {

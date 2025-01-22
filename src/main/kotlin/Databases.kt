@@ -22,7 +22,7 @@ import java.io.File
 import java.util.*
 
 @Serializable
-data class GazeData(val userId: String, val screenshot: String, val timestamp: String, val count: Int)
+data class GazeData(val userId: String, val screenshot: String, val timestamp: String, val warningCount: Int)
 
 
 fun Application.configureDatabases() {
@@ -68,6 +68,30 @@ fun Application.configureDatabases() {
             saveGazeData(warningsDatabase, updatedGazeData, userService)
             call.respond(HttpStatusCode.OK)
         }
+        post("/capture-data") {
+            val gazeData = call.receive<GazeData>()
+            val filePath = saveScreenshot(gazeData.screenshot)
+            val updatedGazeData = gazeData.copy(screenshot = filePath)
+            saveGazeData(warningsDatabase, updatedGazeData, userService)
+            call.respond(HttpStatusCode.OK)
+        }
+    }
+}
+suspend fun sendCaptureData(data: GazeData, userService: UserService, database: MongoDatabase) {
+    val filePath = saveScreenshot(data.screenshot)
+    val updatedGazeData = data.copy(screenshot = filePath)
+    saveGazeData(database, updatedGazeData, userService)
+    addScreenshotToUser(database, data.userId, filePath) // addScreenshotToUser 함수 호출
+}
+
+
+suspend fun addScreenshotToUser(database : MongoDatabase, userId: String, screenshot: String) {
+    val usersCollection = database.getCollection<User>("users")
+    val user = usersCollection.findOne(User::userId eq userId)
+    if (user != null) {
+        val updatedScreenshots = user.screenshots + screenshot
+        val updatedUser = user.copy(screenshots = updatedScreenshots)
+        usersCollection.updateOne(User::userId eq userId, setValue(User::screenshots, updatedScreenshots))
     }
 }
 
@@ -83,10 +107,10 @@ suspend fun saveGazeData(database: MongoDatabase, gazeData: GazeData, userServic
     warningsCollection.insertOne(gazeData)
 
     val usersCollection = database.getCollection<User>("users")
-    val user = usersCollection.findOne(User::user_id eq gazeData.userId)
+    val user = usersCollection.findOne(User::userId eq gazeData.userId)
     if (user != null) {
         val newWarningCount = user.warning_count + 1
-        userService.updateWarningCount(user.user_id, newWarningCount)
+        userService.updateWarningCount(user.userId, newWarningCount)
     }
 }
 
