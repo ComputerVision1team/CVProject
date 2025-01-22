@@ -1,3 +1,5 @@
+// src/main/resources/static/JS/screen.js
+
 'use strict';
 
 const video = document.getElementById('webcam');
@@ -21,24 +23,56 @@ faceMesh.onResults(onResults);
 
 // 웹캠 초기화
 async function setupWebcam() {
-    return new Promise((resolve, reject) => {
-        const navigatorAny = navigator;
-        navigator.getUserMedia = navigator.getUserMedia ||
-            navigatorAny.webkitGetUserMedia || navigatorAny.mozGetUserMedia ||
-            navigatorAny.msGetUserMedia;
-        if (navigator.getUserMedia) {
-            navigator.getUserMedia(
-                { video: true },
-                stream => {
-                    video.srcObject = stream;
-                    video.addEventListener('loadeddata', () => resolve(), false);
-                },
-                error => reject(error)
-            );
-        } else {
-            reject();
-        }
-    });
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 640 },
+                height: { ideal: 480 }
+            }
+        });
+
+        video.srcObject = stream;
+        await new Promise(resolve => video.onloadedmetadata = resolve);
+        video.play();
+
+//        console.log('Webcam initialized:', {
+//            width: video.videoWidth,
+//            height: video.videoHeight
+//        });
+
+        sendWebcamStream(); // 웹캠 스트림 전송 시작
+
+        return true;
+    } catch (error) {
+        console.error('Webcam setup failed with modern API:', error);
+
+        // Fallback to older getUserMedia method
+        return new Promise((resolve, reject) => {
+            const navigatorAny = navigator;
+            navigator.getUserMedia = navigator.getUserMedia ||
+                navigatorAny.webkitGetUserMedia || navigatorAny.mozGetUserMedia ||
+                navigatorAny.msGetUserMedia;
+            if (navigator.getUserMedia) {
+                navigator.getUserMedia(
+                    { video: true },
+                    stream => {
+                        video.srcObject = stream;
+                        video.addEventListener('loadeddata', () => {
+                            video.play();
+                            sendWebcamStream(); // 웹캠 스트림 전송 시작
+                            resolve(true);
+                        }, false);
+                    },
+                    error => {
+                        console.error('Webcam setup failed with fallback method:', error);
+                        reject(false);
+                    }
+                );
+            } else {
+                reject(false);
+            }
+        });
+    }
 }
 
 // 랜드마크 인덱스
@@ -129,7 +163,7 @@ function openChat() {
 }
 
 function setupWebSocket() {
-    if (!socket) {
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
         socket = new WebSocket('ws://localhost:8080/ws');
         socket.onopen = () => {
             console.log('WebSocket connection established');
@@ -138,7 +172,25 @@ function setupWebSocket() {
             const data = JSON.parse(event.data);
             if (data.type === 'chat') {
                 displayChatMessage(data.userId, data.message);
+            } else if (data.type === 'openChat') {
+                openChat(data.userId);
+            } else if (data.type === 'webcam') {
+                displayWebcamStream(data.userId, data.image);
+            } else if (data.type === 'warningImages') {
+                warningImages.push(...data.images);
+            } else if (data.type === 'captureData') {
+                console.log('Capture data received:', data);
+            } else if (data.type === 'warning') {
+                increaseWarning();
             }
+        };
+        socket.onclose = () => {
+            console.log('WebSocket connection closed, retrying...');
+            setTimeout(setupWebSocket, 1000); // 1초 후 재연결 시도
+        };
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+            socket.close();
         };
     }
 }
@@ -167,10 +219,22 @@ function sendWebcamStream() {
     canvas.height = video.videoHeight;
 
     setInterval(() => {
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = canvas.toDataURL('image/jpeg');
-        socket.send(JSON.stringify({ type: 'webcam', image: imageData, userId: '18010871' }));
-    }, 1000 / 30); // 30 FPS
+        try {
+            if (socket.readyState === WebSocket.OPEN) {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/jpeg');
+                if (imageData && imageData !== 'data:,') {
+                    socket.send(JSON.stringify({ type: 'webcam', image: imageData, userId: '18010871' }));
+                } else {
+                    console.warn('Captured image data is empty.');
+                }
+            } else {
+                console.warn('WebSocket is not open. Skipping frame.');
+            }
+        } catch (error) {
+            console.error('Error capturing or sending webcam stream:', error);
+        }
+    }, 1000 / 30); // 10 FPS
 }
 
 function captureScreen() {

@@ -6,11 +6,17 @@ function setupWebSocket() {
     socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.type === 'webcam') {
+        // 어떤 데이터가 전달되었는지 확인하기 위해 콘솔에 출력
+//        console.log(data);
             displayWebcamStream(data.userId, data.image);
         } else if (data.type === 'chat') {
             displayChatMessage(data.userId, data.message);
         } else if (data.type === 'openChat') {
             openChat(data.userId);
+        } else if (data.type === 'warning') {
+            handleWarning(data.count);
+        } else if (data.type === 'warningImage') {
+            displayWarningImage(data.image);
         }
     };
 }
@@ -53,5 +59,25 @@ document.getElementById('chat-input').addEventListener('keypress', (event) => {
         event.target.value = '';
     }
 });
+function handleWarning(count) {
+    captureWarningImage();
+    const webcam = document.getElementById('.video1');
+
+    if (count === 2) {
+        webcam.classList.add('warning-border-2');
+    } else if (count >= 3) {
+        webcam.classList.remove('warning-border-2');
+        webcam.classList.add('warning-border-3');
+        document.body.classList.add('hidden-elements');
+        document.getElementById('disqualified-message').style.display = 'block';
+        document.getElementById('chat-box').style.display = 'block';
+        document.getElementById('view-warning').style.display = 'block';
+        openChat(); // 경고 3회 시 자동으로 채팅 열기
+    }
+}
+function increaseWarning() {
+    warningCount++;
+    handleWarning(warningCount);
+}
 
 setupWebSocket();
