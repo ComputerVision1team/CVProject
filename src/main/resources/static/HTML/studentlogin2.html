@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="../CSS/globals.css">
+    <link rel="stylesheet" href="../CSS/test.css">
+</head>
+<body>
+<div class="startTest">
+
+    <div class=" sidebarbox">
+        <div class="aside">
+            <div class="img"></div>
+            <div class="nav">
+                <div class="navbar">
+                    <button class="dash">
+                        <img class="dashsvg" src="/images/dash.svg"/>
+                        <div class="dashboard">
+                            Dashboard
+                        </div>
+                    </button>
+                    <button class="dash">
+                        <img class="supportsvg" src="/images/support.svg"/>
+                        <div class="dashboard">
+                            Support
+                        </div>
+                    </button>
+                    <button class="dash">
+                        <img class="notisvg" src="/images/noti.svg"/>
+                        <div class="dashboard">
+                            Notification
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="examscreen">
+        <div class="testscreen">
+            <video id="webcam" class="video1" autoplay playsinline></video>
+            <canvas id="overlay"></canvas>
+        </div>
+<!--        <div class="contentbox">-->
+        <img class="question" src="/images/testQ.svg"/>
+<!--        </div>-->
+        <div id="warning-message"
+             style="display: none; position: fixed; bottom: 10px; right: 10px; background-color: red; color: white; padding: 10px;">
+            경고 1회
+        </div>
+        <div id="chat-box" class="chat-box">
+            <div class="chat-header">관리자와 채팅</div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <input type="text" class="chat-input" id="chat-input" placeholder="메시지를 입력하세요..."
+                   onkeypress="sendMessage(event)"/>
+        </div>
+
+        <div id="disqualified-message" class="disqualified-message">부정행위로 실격되었습니다</div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+<script src="../JS/screen.js"></script>
+<script src="../JS/script.js"></script>
+</body>
+</html>
