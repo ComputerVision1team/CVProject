@@ -6,24 +6,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login Page</title>
   <link rel="stylesheet" href="../CSS/globals.css">
-  <link rel="stylesheet" href="../CSS/styles.css">
+  <link rel="stylesheet" href="../CSS/test.css">
 </head>
 
 <body>
-<div class="login-success">
+<div class="waiting">
+  <div class="incheon-university">
+    Intel University
+  </div>
+  <div class="course-understanding-object-oriented-programming">
+    Course: Understanding Object-Oriented Programming
+  </div>
   <div class="div">
-    <div class="text-wrapper">인공지능 시험 PM 2시</div>
-    <p class="f-f">
-      <span class="span">*유의사항*<br /></span>
-      <span class="text-wrapper-2">부정행위자는 F 학점<br />경고 창은 최대 3번 허용(4번 = F)<br />질문 사항은 채팅 활용</span>
-    </p>
-    <div class="group">
-      <div class="overlap-group"><img class="image" src="/images/waiting.png" /></div>
-      <div class="text-wrapper-3">인텔대학교</div>
-      <p class="element">응시자 : 김일번<br />학번 : 18010871</p>
+    <div class="header">
+      <div class="certification-exam-pm-200">
+        Final Exam 2:00 PM
+      </div>
+    </div>
+    <div class="main">
+      <div class="div-2">
+        <img class="svg" src="/images/time.svg"/>
+        <div class="currenttime">
+          <div id="current-time" class="text-0547-am">
+
+          </div>
+        </div>
+      </div>
+
+      <div class="div-3">
+        <div class="h3">
+          <div class="text-important-notice">
+            *공지사항*
+          </div>
+        </div>
+        <div class="ul">
+          <div class="li">
+            • Supervisor will start the exam at the designated
+          </div>
+          <div class="li">
+            • Students should be ready with their ID cards
+          </div>
+          <div class="li">
+            • No materials allowed except those specified
+          </div>
+          <div class="li">
+            • The exam will be locked after START until END
+          </div>
+        </div>
+
+      </div>
+      <div class="div-4">
+        <div class="div-5">
+          <div class="span">
+            <img class="i" src="/images/wait.svg"/>
+            <div class="waiting-room">
+              Waiting Room
+            </div>
+          </div>
+        </div>
+        <button class="button" onclick="redirectToStudentLogin2()">
+          <div class="start">
+            START
+          </div>
+        </button>
+      </div>
     </div>
   </div>
 </div>
+
+<script src="../JS/script.js"></script>
+<script>
+  function redirectToStudentLogin2() {
+      window.location.href = 'studentlogin2.html';
+  }
+</script>
 </body>
 
 </html>

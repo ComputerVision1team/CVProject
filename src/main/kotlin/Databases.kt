@@ -121,8 +121,8 @@ suspend fun saveGazeData(database: MongoDatabase, gazeData: GazeData, userServic
 fun Application.connectToMongoDB(): Pair<MongoDatabase, MongoDatabase> {
     val user = environment.config.tryGetString("db.mongo.user")
     val password = environment.config.tryGetString("db.mongo.password")
-    val host = environment.config.tryGetString("db.mongo.host") ?: "192.168.45.5"
-    //val host = environment.config.tryGetString("db.mongo.host") ?: "localhost"
+   // val host = environment.config.tryGetString("db.mongo.host") ?: "192.168.45.5"
+    val host = environment.config.tryGetString("db.mongo.host") ?: "localhost"
     val port = environment.config.tryGetString("db.mongo.port") ?: "27017"
     val maxPoolSize = environment.config.tryGetString("db.mongo.maxPoolSize")?.toInt() ?: 20
     val userDatabaseName = environment.config.tryGetString("db.mongo.database.name") ?: "Users"

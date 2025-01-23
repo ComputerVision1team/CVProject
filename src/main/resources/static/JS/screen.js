@@ -2,8 +2,8 @@
 
 'use strict';
 
-const video = document.getElementById('webcam');
-const canvas = document.getElementById('overlay');
+const video = document.getElementById('webcam', 'webcam2', 'webcam3');
+const canvas = document.getElementById('overlay', 'overlay2', 'overlay3');
 const context = canvas.getContext('2d');
 let warningCount = 0;
 let socket;

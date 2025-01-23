@@ -6,38 +6,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
     <link rel="stylesheet" href="../CSS/globals.css">
-    <link rel="stylesheet" href="../CSS/styles.css">
+    <link rel="stylesheet" href="../CSS/test.css">
 </head>
 
 <body>
-<div class="start-screen">
-    <div class="div">
-        <div class="form">
-            <div class="username">
-                <div class="overlap-group">
-                    <input id="username" class="input-field" type="text" placeholder="USERNAME" required/>
-                    <img class="img" src="/images/user.png"/>
+<div class="mainscreen">
+
+    <div class=" sidebarbox">
+        <div class="overlap-group">
+            <div class="div-3">
+                <div class="img">
+                </div>
+                <div class="h2">
+                    <div class="exam-portal">
+                        Exam Portal
+                    </div>
+                </div>
+                <div class="p">
+                    <div class="sign-in-to-access-your-exam">
+                        Sign in to access your exam
+                    </div>
                 </div>
             </div>
-            <div class="password">
-                <div class="overlap-group">
-                    <input id="password" class="input-field" type="password" placeholder="PASSWORD" required/>
-
-                    <img class="img" src="/images/lock.png"/>
+            <div class="div-4">
+                <div class="div-5">
+                    <div class="form">
+                        <div class="div-6">
+                            <div class="label">
+                                <div class="username">
+                                    Username
+                                </div>
+                            </div>
+                            <div class="div-7">
+                                <div class="username-1">
+                                    <input id="username" class="input-field" type="text" placeholder="USERNAME" required/>
+                                  <img class="img7" src="/images/user.svg"/>  <!--  doesnt show up on preview but shows up on server -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="div-9">
+                            <div class="label-1">
+                                <div class="password">
+                                    Password
+                                </div>
+                            </div>
+                            <div class="div-10">
+                                <div class="username-1">
+                                    <input id="password" class="input-field" type="text" placeholder="PASSWORD" required/>
+                                    <img class="img7" src="/images/lock.svg"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="div-12">
+                            <button class="login-btn" onclick="login()">
+                                <div class="sign-in">
+                                    <div class="login">LOGIN</div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="div-13">
+                        <div class="a">
+                            <div class="forgot-your-password">
+                                Forgot your password?
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <button class="login-btn" onclick="login()">
-                <div class="overlap">
-                    <div class="login">LOGIN</div>
-                </div>
-            </button>
-            <div class="text-wrapper-2">Forgot password?</div>
-
         </div>
-        <div class="test">
-            <img class="test-2" src="/images/mainscreen.png"/>
+    </div>
+    <div class="contentbox">
+        <div class="div-15">
+            <div class="img-1">
+            </div>
         </div>
-        <div class="text-wrapper-3">인텔대학교</div>
     </div>
 </div>
 <script src="../JS/login.js"></script>

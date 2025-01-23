@@ -12,7 +12,7 @@ async function login() {
       });
 
       if (response.ok) {
-        window.location.href = '/HTML/proflogin1.html';
+        window.location.href = '/HTML/studentlogin1.html';
       } else {
         const error = await response.text();
                     alert('Login failed: ' + error);
