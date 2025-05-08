@@ -12,13 +12,26 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
+import kotlinx.serialization.Serializable
+import org.litote.kmongo.KMongo
+import org.litote.kmongo.eq
+import org.litote.kmongo.findOne
+import org.litote.kmongo.getCollection
+import org.litote.kmongo.setValue
+import java.io.File
+import java.nio.file.Paths
+import java.util.*
+
+@Serializable
+data class GazeData(val userId: String, val screenshot: String, val timestamp: String, val count: Int)
+
 
 fun Application.configureDatabases() {
     install(ContentNegotiation) {
         json()
     }
-    val mongoDatabase = connectToMongoDB()
-    val userService = UserService(mongoDatabase)
+    val (userDatabase, warningsDatabase) = connectToMongoDB()
+    val userService = UserService(userDatabase)
     routing {
         // Create user
         post("/users") {
@@ -27,14 +40,14 @@ fun Application.configureDatabases() {
             call.respond(HttpStatusCode.Created, id)
         }
         // Read user
-        get("/{id}") {
+        get("/users/{id}") {
             val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
             userService.read(id)?.let { user ->
                 call.respond(user)
             } ?: call.respond(HttpStatusCode.NotFound)
         }
         // Update user
-        put("/{id}") {
+        put("/users/{id}") {
             val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
             val user = call.receive<User>()
             userService.update(id, user)?.let {
@@ -42,55 +55,89 @@ fun Application.configureDatabases() {
             } ?: call.respond(HttpStatusCode.NotFound)
         }
         // Delete user
-        delete("/{id}") {
+        delete("/users/{id}") {
             val id = call.parameters["id"] ?: throw IllegalArgumentException("No ID found")
             userService.delete(id)?.let {
                 call.respond(HttpStatusCode.OK)
             } ?: call.respond(HttpStatusCode.NotFound)
         }
+        // Save gaze data
+        post("/gaze-data") {
+            val gazeData = call.receive<GazeData>()
+            val filePath = saveScreenshot(gazeData.screenshot)
+            val updatedGazeData = gazeData.copy(screenshot = filePath)
+            saveGazeData(warningsDatabase, updatedGazeData, userService)
+            call.respond(HttpStatusCode.OK)
+        }
+        post("/capture-data") {
+            val data = call.receive<GazeData>()
+            val screenshotData = data.screenshot.split(",")[1]
+            val decodedBytes = Base64.getDecoder().decode(screenshotData)
+            val fileName = "${data.userId}_${data.timestamp}.png"
+            val filePath = Paths.get("screenshots", fileName).toString()
+            File(filePath).writeBytes(decodedBytes)
+            call.respond(HttpStatusCode.OK, "Screenshot saved")
+        }
+        get("/warning-images") {
+            val warningImages = getRecentWarningImages()
+            call.respond(warningImages)
+        }
     }
 }
-/**
- * Establishes connection with a MongoDB database.
- *
- * The following configuration properties (in application.yaml/application.conf) can be specified:
- * * `db.mongo.user` username for your database
- * * `db.mongo.password` password for the user
- * * `db.mongo.host` host that will be used for the database connection
- * * `db.mongo.port` port that will be used for the database connection
- * * `db.mongo.maxPoolSize` maximum number of connections to a MongoDB server
- * * `db.mongo.database.name` name of the database
- *
- * IMPORTANT NOTE: in order to make MongoDB connection working, you have to start a MongoDB server first.
- * See the instructions here: https://www.mongodb.com/docs/manual/administration/install-community/
- * all the paramaters above
- *
- * @returns [MongoDatabase] instance
- * */
 
-fun Application.connectToMongoDB(): MongoDatabase {
+fun getRecentWarningImages(): List<String> {
+    val screenshotsDir = File("screenshots")
+    if (!screenshotsDir.exists() || !screenshotsDir.isDirectory) {
+        return emptyList()
+    }
+
+    return screenshotsDir.listFiles { file -> file.extension == "png" }
+        ?.sortedByDescending { it.lastModified() }
+        ?.take(3)
+        ?.map { it.toURI().toString() }
+        ?: emptyList()
+}
+
+fun saveScreenshot(dataUrl: String): String {
+    val base64Image = dataUrl.split(",")[1]
+    val imageBytes = Base64.getDecoder().decode(base64Image)
+    val filePath = "screenshots/${UUID.randomUUID()}.png"
+    File(filePath).writeBytes(imageBytes)
+    return filePath
+}
+
+suspend fun saveGazeData(database: MongoDatabase, gazeData: GazeData, userService: UserService) {
+    val warningsCollection = database.getCollection<GazeData>("warnings")
+    warningsCollection.insertOne(gazeData)
+
+    val usersCollection = database.getCollection<User>("users")
+    val user = usersCollection.findOne(User::user_id eq gazeData.userId)
+    if (user != null) {
+        val newWarningCount = user.warning_count + 1
+        userService.updateWarningCount(user.user_id, newWarningCount)
+    }
+}
+
+fun Application.connectToMongoDB(): Pair<MongoDatabase, MongoDatabase> {
     val user = environment.config.tryGetString("db.mongo.user")
     val password = environment.config.tryGetString("db.mongo.password")
-    //val host = environment.config.tryGetString("db.mongo.host") ?: "192.168.45.5"
-    val host = environment.config.tryGetString("db.mongo.host") ?: "127.0.0.1"
-
+   // val host = environment.config.tryGetString("db.mongo.host") ?: "192.168.45.5"
+    val host = environment.config.tryGetString("db.mongo.host") ?: "localhost"
     val port = environment.config.tryGetString("db.mongo.port") ?: "27017"
     val maxPoolSize = environment.config.tryGetString("db.mongo.maxPoolSize")?.toInt() ?: 20
     val userDatabaseName = environment.config.tryGetString("db.mongo.database.name") ?: "Users"
-    //val warningDatabaseName = environment.config.tryGetString("db.mongo.database.name") ?: "Warnings"
+    val warningsDatabaseName = "Warnings"
 
     val credentials = user?.let { userVal -> password?.let { passwordVal -> "$userVal:$passwordVal@" } }.orEmpty()
     val uri = "mongodb://$credentials$host:$port/?maxPoolSize=$maxPoolSize&w=majority"
 
     val mongoClient = MongoClients.create(uri)
-    val userdatabase = mongoClient.getDatabase(userDatabaseName)
-    //val warningdatabase = mongoClient.getDatabase(warningDatabaseName)
+    val userDatabase = mongoClient.getDatabase(userDatabaseName)
+    val warningsDatabase = mongoClient.getDatabase(warningsDatabaseName)
 
     monitor.subscribe(ApplicationStopped) {
         mongoClient.close()
     }
 
-    //return Pair(userdatabase, warningdatabase)
-    return  userdatabase
+    return Pair(userDatabase, warningsDatabase)
 }
-//back ok

@@ -4,7 +4,6 @@ import io.ktor.server.application.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 
-
 fun Application.configureStatic() {
     routing {
         static("/CSS") {
@@ -18,6 +17,9 @@ fun Application.configureStatic() {
         }
         static("/images") {
             resources("static/images")
+        }
+        static("/resources") {
+            resources("static/resources")
         }
     }
 }

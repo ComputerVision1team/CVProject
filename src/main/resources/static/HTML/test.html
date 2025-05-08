@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eye Tracking with Warning</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"></script>
+
+    <style>
+        #webcam {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 640px;
+            height: 480px;
+            border: 2px solid #000;
+        }
+        #warning-message {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: red;
+            color: white;
+            padding: 10px;
+            display: none;
+        }
+        canvas {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            width: 640px;
+            height: 480px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<video id="webcam" autoplay playsinline></video>
+<div id="warning-message">Warning: Eyes out of bounds!</div>
+<script src="../JS/eye_tracking.js"></script>
+</body>
+</html>

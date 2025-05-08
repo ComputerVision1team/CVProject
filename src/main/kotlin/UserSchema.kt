@@ -16,7 +16,8 @@ data class User(
     val user_id: String,
     val username: String,
     val password: String,
-    val role: String
+    val warning_count: Int = 0
+//    val role: String
 ) {
     fun toDocument(): Document = Document.parse(Json.encodeToString(this))
 
@@ -31,7 +32,6 @@ class UserService(private val database: MongoDatabase) {
     var collection: MongoCollection<Document>
 
     init {
-        // Check if the collection exists before creating it
         val collectionNames = database.listCollectionNames().into(mutableListOf())
         if ("users" !in collectionNames) {
             database.createCollection("users")
@@ -54,6 +54,14 @@ class UserService(private val database: MongoDatabase) {
     // Update a user
     suspend fun update(id: String, user: User): Document? = withContext(Dispatchers.IO) {
         collection.findOneAndReplace(Filters.eq("_id", ObjectId(id)), user.toDocument())
+    }
+
+    // Update warning count
+    suspend fun updateWarningCount(id: String, warningCount: Int): Document? = withContext(Dispatchers.IO) {
+        collection.findOneAndUpdate(
+            Filters.eq("_id", ObjectId(id)),
+            Document("\$set", Document("warning_count", warningCount))
+        )
     }
 
     // Delete a user

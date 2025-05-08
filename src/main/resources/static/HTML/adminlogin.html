@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="../CSS/globals.css">
+    <link rel="stylesheet" href="../CSS/styles.css">
+</head>
+<body>
+<div class="login-screen">
+    <div class="form">
+        <div class="username">
+            <div class="overlap-group">
+                <input id="admin-username" class="input-field" type="text" placeholder="USERNAME" required/>
+                <img class="img" src="/images/user.png"/>
+            </div>
+        </div>
+        <div class="password">
+            <div class="overlap-group">
+                <input id="admin-password" class="input-field" type="password" placeholder="PASSWORD" required/>
+                <img class="img" src="/images/lock.png"/>
+            </div>
+        </div>
+        <button class="login-btn" onclick="adminLogin()">
+            <div class="overlap">
+                <div class="login">LOGIN</div>
+            </div>
+        </button>
+    </div>
+</div>
+<script src="../JS/adminlogin.js"></script>
+</body>
+</html>
